@@ -22,7 +22,7 @@ void main()
     // Model normal
     vec3 modelNormal = (modelMatrix * vec4(normal, 0.0)).xyz;
 
-    float t = uTime * 0.02;
+    float t = uTime * 0.01;
 
     mat2 rot0 = rotate(t);
     vec3 p0 = modelPosition.xyz;
