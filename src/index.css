@@ -1,0 +1,24 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    background-color: #000011;
+}
+
+html,
+body,
+#root,
+#main {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+div {
+    touch-action: none;
+}
