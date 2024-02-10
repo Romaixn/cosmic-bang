@@ -24,16 +24,17 @@ void main()
 
     float t = uTime * 0.02;
 
-    mat2 rot = rotate(t);
-
+    mat2 rot0 = rotate(t);
     vec3 p0 = modelPosition.xyz;
-    p0.yz = rot * p0.yz;
+    p0.yz = rot0 * p0.yz;
 
+    mat2 rot1 = rotate(t + 10.0);
     vec3 p1 = modelPosition.xyz;
-    p1.xz = rot * p1.xz;
+    p1.xz = rot1 * p1.xz;
 
+    mat2 rot2 = rotate(t + 20.0);
     vec3 p2 = modelPosition.xyz;
-    p2.xy = rot * p2.xy;
+    p2.xy = rot2 * p2.xy;
 
     // Varyings
     vUv = uv;
