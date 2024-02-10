@@ -3,6 +3,7 @@ uniform float uTime;
 uniform sampler2D uNoise;
 
 varying vec2 vUv;
+varying vec3 vNormal;
 varying vec3 vPosition;
 varying vec3 vLayer0;
 varying vec3 vLayer1;
@@ -52,18 +53,27 @@ float sun() {
 }
 
 void main() {
+    vec3 viewDirection = normalize(vPosition - cameraPosition);
+    vec3 normal = normalize(vNormal);
+
+    // Fresnel
+    float fresnel = dot(viewDirection, normal) + 1.0;
+    fresnel = pow(fresnel, 2.0);
+
+    // Noise
     vec4 p = vec4(vPosition * 3.0, uTime * 0.02);
     float noisy = fbm(p);
 
+    // Spots
     vec4 p1 = vec4(vPosition * 2.0, uTime * 0.02);
     float spots = max(snoise(p1), 0.0);
 
+    // Colors
     float brightness = sun();
     brightness = brightness * 2.6 + 1.5;
+    brightness += fresnel;
     vec3 color = brightnessToColor(brightness);
 
-    gl_FragColor = vec4(vec3(noisy), 1.0);
-    gl_FragColor *= mix(1.0, spots, 0.7);
 
     gl_FragColor = vec4(color, 1.0);
 }
