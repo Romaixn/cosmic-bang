@@ -15,7 +15,7 @@ float PI = 3.14159265359;
 
 vec3 brightnessToColor(float b) {
     b *= 0.25;
-    return (vec3(b, b*b, b*b*b*b) / 0.25) * 0.6;
+    return (vec3(b, b*b, b*b*b*b) / 0.25) * 0.8;
 }
 
 float fbm(vec4 p) {

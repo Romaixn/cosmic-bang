@@ -32,7 +32,7 @@ void main()
     vec3 p1 = modelPosition.xyz;
     p1.xz = rot1 * p1.xz;
 
-    mat2 rot2 = rotate(t + 20.0);
+    mat2 rot2 = rotate(t + 30.0);
     vec3 p2 = modelPosition.xyz;
     p2.xy = rot2 * p2.xy;
 
