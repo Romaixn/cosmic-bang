@@ -33,20 +33,17 @@ float fbm(vec4 p) {
     return sum;
 }
 
-// See "Combustible Voronoi"
-// https://www.shadertoy.com/view/4tlSzl
-vec3 firePalette(float i){
-    float T = 1400. + 1300.*i; // Temperature range (in Kelvin).
-    vec3 L = vec3(7.4, 5.6, 4.4); // Red, green, blue wavelengths (in hundreds of nanometers).
-    L = pow(L,vec3(5.0)) * (exp(1.43876719683e5/(T*L))-1.0);
-    return 1.0-exp(-5e8/L); // Exposure level. Set to "50." For "70," change the "5" to a "7," etc.
-}
-
 float sun() {
     float sum = 0.0;
-    sum += fbm(vec4(vLayer0 * 3.0, uTime * 0.02));
+
+    // Spots
+    vec4 p = vec4(vPosition * 2.0, uTime * 0.02);
+    float spots = max(snoise(p), 0.0);
+
+    sum += fbm(vec4(vLayer0 * 3.0, uTime * 0.02)) + mix(1.0, spots, 0.7);
     sum += fbm(vec4(vLayer1 * 3.0, uTime * 0.02));
     sum += fbm(vec4(vLayer2 * 3.0, uTime * 0.02));
+    sum += mix(0.0, spots, 0.7);
     sum *= 0.12;
 
     return sum;
