@@ -118,7 +118,7 @@ export const Ecliptic = ({ xRadius = 1, zRadius = 1 }) => {
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
     return (
       <line geometry={lineGeometry}>
-        <lineBasicMaterial attach="material" color="#393e46" linewidth={10} />
+        <lineBasicMaterial attach="material" color="#393e46" linewidth={2} />
       </line>
     );
   }
