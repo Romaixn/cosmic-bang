@@ -43,8 +43,8 @@ const Experience = () => {
         for (let index = 0; index < totalPlanets; index++) {
           planets.push({
             id: index,
-            xRadius: (index + 1.5) * 5,
-            zRadius: (index + 1.5) * 5,
+            xRadius: (index + 2) * 5,
+            zRadius: (index + 2) * 5,
             size: random(0.5, 2),
             speed: random(0.05, 0.1),
             offset: random(0, Math.PI * 2),
