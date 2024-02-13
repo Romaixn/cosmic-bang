@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
+import { useTexture } from '@react-three/drei'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import * as THREE from 'three'
@@ -29,7 +30,7 @@ const Planet = ({
     const uniforms = useMemo(
         () => ({
             uPlanetTexture: new THREE.Uniform(planetTexture),
-            uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
+            uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
             uAtmosphereDayColor: new THREE.Uniform(new THREE.Color('#00aaff')),
             uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color('#ff6600'))
         }),
@@ -53,7 +54,7 @@ const Planet = ({
     })
 
     return <>
-        <Atmosphere x={x} z={z} size={size} />
+        <Atmosphere x={x} z={z} size={size} dayColor='#00aaff' twilightColor='#ff6600' />
         <mesh ref={planet}>
             <sphereGeometry args={[size, 64, 64]} />
             <shaderMaterial
@@ -66,13 +67,13 @@ const Planet = ({
     </>
 }
 
-export const Atmosphere = ({ x, z, size }) => {
+export const Atmosphere = ({ x, z, size, dayColor, twilightColor }) => {
     const atmosphere = useRef()
     const uniforms = useMemo(
         () => ({
-            uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
-            uAtmosphereDayColor: new THREE.Uniform(new THREE.Color('#00aaff')),
-            uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color('#ff6600'))
+            uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
+            uAtmosphereDayColor: new THREE.Uniform(new THREE.Color(dayColor)),
+            uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color(twilightColor))
         }),
         []
     )
@@ -80,6 +81,10 @@ export const Atmosphere = ({ x, z, size }) => {
     useFrame(() => {
         atmosphere.current.position.x = x
         atmosphere.current.position.z = z
+
+        // Sun direction
+        const sunDirection = new THREE.Vector3(-x, 0, -z).normalize()
+        atmosphere.current.material.uniforms.uSunDirection.value = sunDirection
     })
 
     return (

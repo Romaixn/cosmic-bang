@@ -4,6 +4,7 @@ import * as THREE from "three"
 
 import vertexShader from './shaders/sun/vertex.glsl'
 import fragmentShader from './shaders/sun/fragment.glsl'
+import atmosphereFragmentShader from './shaders/sun/atmosphereFragment.glsl'
 import { useTexture } from "@react-three/drei"
 
 export const Sun = () => {
@@ -26,8 +27,9 @@ export const Sun = () => {
     })
 
     return <>
+        <Atmosphere x={0} z={0} size={4} />
         <mesh ref={sun}>
-            <sphereGeometry args={[2, 64, 64]} />
+            <sphereGeometry args={[4, 64, 64]} />
             <shaderMaterial
                 vertexShader={vertexShader}
                 fragmentShader={fragmentShader}
@@ -36,5 +38,34 @@ export const Sun = () => {
         </mesh>
     </>
 }
+
+export const Atmosphere = ({ x, z, size }) => {
+    const atmosphere = useRef()
+    const uniforms = useMemo(
+        () => ({
+            uAtmosphereColor: new THREE.Uniform(new THREE.Color('#F85E29')),
+        }),
+        []
+    )
+
+    useFrame(() => {
+        atmosphere.current.position.x = x
+        atmosphere.current.position.z = z
+    })
+
+    return (
+        <mesh ref={atmosphere} scale={[1.2, 1.2, 1.2]} >
+            <sphereGeometry args={[size, 64, 64]} />
+            <shaderMaterial
+                vertexShader={vertexShader}
+                fragmentShader={atmosphereFragmentShader}
+                uniforms={uniforms}
+                side={THREE.BackSide}
+                transparent
+            />
+        </mesh>
+    )
+}
+
 
 export default Sun

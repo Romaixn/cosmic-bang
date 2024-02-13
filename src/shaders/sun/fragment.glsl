@@ -37,7 +37,7 @@ float sun() {
     float sum = 0.0;
 
     // Spots
-    vec4 p = vec4(vPosition * 2.0, uTime * 0.02);
+    vec4 p = vec4(vPosition * 2.0, uTime * 0.1);
     float spots = max(snoise(p), 0.0);
 
     sum += fbm(vec4(vLayer0 * 3.0, uTime * 0.02)) + mix(1.0, spots, 0.7);

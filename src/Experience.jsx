@@ -1,9 +1,10 @@
-import { OrbitControls } from "@react-three/drei"
+import { OrbitControls, Stars } from "@react-three/drei"
 import Planet from "./Planet"
 import { useMemo } from "react"
 import Sun from "./Sun"
 
 const Experience = () => {
+    const totalPlanets = 6
     const planets = useMemo(() => {
         const random = (a, b) => a + Math.random() * b;
         const shuffle = (a) => {
@@ -39,7 +40,6 @@ const Experience = () => {
         ]);
 
         const planets = [];
-        const totalPlanets = 6;
         for (let index = 0; index < totalPlanets; index++) {
           planets.push({
             id: index,
@@ -58,11 +58,12 @@ const Experience = () => {
 
     return <>
         <Sun />
-        {/* {planets.map((planet) => (
+        {planets.map((planet) => (
             <Planet key={planet.id} {...planet} />
-        ))} */}
+        ))}
+        <Stars />
 
-        <OrbitControls />
+        <OrbitControls minDistance={5} maxDistance={totalPlanets * 10} />
     </>
 }
 
