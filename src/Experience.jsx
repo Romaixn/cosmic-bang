@@ -2,6 +2,9 @@ import { OrbitControls, Stars } from "@react-three/drei"
 import Planet from "./Planet"
 import { useMemo } from "react"
 import Sun from "./Sun"
+import { useFrame, useThree } from "@react-three/fiber"
+import * as THREE from "three"
+import useStore from "./stores/useStore"
 
 const Experience = () => {
     const totalPlanets = 6
@@ -56,14 +59,31 @@ const Experience = () => {
         return planets
     }, [])
 
+    const { onPlanetClick, selectedPlanet, controlsEnabled } = useStore()
+
+    const { camera } = useThree()
+
+    useFrame(() =>  {
+        if (selectedPlanet) {
+            const zoomDistance = 4
+
+            const direction = selectedPlanet.position.clone().sub(new THREE.Vector3(0, 0, 0)).normalize();
+            const zoomPosition = selectedPlanet.position.clone().add(direction.multiplyScalar(-zoomDistance));
+
+            camera.position.lerp(zoomPosition, 0.1);
+
+            camera.lookAt(selectedPlanet.position);
+        }
+    })
+
     return <>
         <Sun />
-        {planets.map((planet) => (
+        {/* {planets.map((planet) => (
             <Planet key={planet.id} {...planet} />
-        ))}
+        ))} */}
         <Stars />
 
-        <OrbitControls minDistance={5} maxDistance={totalPlanets * 10} />
+        <OrbitControls maxDistance={totalPlanets * 10} enabled={controlsEnabled} />
     </>
 }
 

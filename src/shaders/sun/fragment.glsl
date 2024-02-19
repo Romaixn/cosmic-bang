@@ -1,6 +1,8 @@
 uniform vec2 uResolution;
 uniform float uTime;
 uniform sampler2D uNoise;
+uniform float uBigBang;
+uniform vec3 uScale;
 
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -71,6 +73,10 @@ void main() {
     brightness += fresnel;
     vec3 color = brightnessToColor(brightness);
 
+    if(all(lessThan(uScale, vec3(0.0)))) {
+        vec3 lightBlue = vec3(0.4, 0.7, 1.0);
+        color = mix(color, lightBlue, 0.75);
+    }
 
     gl_FragColor = vec4(color, 1.0);
 }
