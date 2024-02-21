@@ -7,9 +7,12 @@ import fragmentShader from './shaders/sun/fragment.glsl'
 import atmosphereFragmentShader from './shaders/sun/atmosphereFragment.glsl'
 import { useTexture } from "@react-three/drei"
 import useStore from "./stores/useStore"
+import { useEffect } from "react"
+import { useState } from "react"
 
 export const Sun = () => {
     const sun = useRef()
+    const [hovered, setHovered] = useState(false)
     const bigBang = useStore((state) => state.bigBang)
     const startBigBang = useStore((state) => state.startBigBang)
     const noise = useTexture('/noise.png')
@@ -45,9 +48,18 @@ export const Sun = () => {
         sun.current.rotation.y += 0.0005
     })
 
+    useEffect(() => {
+        if(bigBang) {
+            document.body.style.cursor = 'auto'
+            return
+        }
+
+        document.body.style.cursor = hovered ? 'pointer' : 'auto'
+    }, [hovered, bigBang])
+
     return <>
         <Atmosphere x={0} z={0} size={4} />
-        <mesh ref={sun} onClick={launchBigBang}>
+        <mesh ref={sun} onClick={launchBigBang} onPointerOver={() => setHovered(true) } onPointerOut={() => setHovered(false) }>
             <sphereGeometry args={[4, 64, 64]} />
             <shaderMaterial
                 vertexShader={vertexShader}
