@@ -60,13 +60,14 @@ export const Sun = () => {
 
 export const Atmosphere = ({ x, z, size }) => {
     const atmosphere = useRef()
+    const bigBang = useStore((state) => state.bigBang)
     const uniforms = useMemo(
         () => ({
             uAtmosphereColor: new THREE.Uniform(new THREE.Color('#F85E29')),
+            uBigBang: new THREE.Uniform(bigBang ? 1.0 : 0.0),
         }),
         []
     )
-    const bigBang = useStore((state) => state.bigBang)
 
     useFrame(() => {
         if(bigBang) {

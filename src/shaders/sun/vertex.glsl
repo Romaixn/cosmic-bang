@@ -26,9 +26,9 @@ void main()
 {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
-    if (uBigBang == 1.0) {
+    if (uBigBang == 1.0 && all(greaterThan(uScale, vec3(0.0)))) {
         float displacement = cnoise(position + vec3(0.5 * uTime));
-        vec3 newPosition = position + normal * ((1.0 - uScale.x) * displacement);
+        vec3 newPosition = position + normal * (((1.0 - uScale.x) * 2.5) * displacement);
 
         modelPosition = modelMatrix * vec4(newPosition, 1.0);
         vec4 viewPosition = viewMatrix * modelPosition;
