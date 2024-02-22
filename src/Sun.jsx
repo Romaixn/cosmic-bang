@@ -1,20 +1,21 @@
 import { useFrame } from "@react-three/fiber"
-import { useMemo, useRef } from "react"
+import { useMemo, useRef, useEffect, useState } from "react"
+import { useTexture } from "@react-three/drei"
 import * as THREE from "three"
-import gsap from "gsap"
+
+import useStore from "./stores/useStore"
 import vertexShader from './shaders/sun/vertex.glsl'
 import fragmentShader from './shaders/sun/fragment.glsl'
 import atmosphereFragmentShader from './shaders/sun/atmosphereFragment.glsl'
-import { useTexture } from "@react-three/drei"
-import useStore from "./stores/useStore"
-import { useEffect } from "react"
-import { useState } from "react"
+import distortWaveVertexShader from './shaders/distortWave/vertex.glsl'
+import distortWaveFragmentShader from './shaders/distortWave/fragment.glsl'
 
 export const Sun = () => {
     const sun = useRef()
     const [hovered, setHovered] = useState(false)
     const bigBang = useStore((state) => state.bigBang)
     const startBigBang = useStore((state) => state.startBigBang)
+    const explode = useStore((state) => state.explode)
     const noise = useTexture('/noise.png')
     const uniforms = useMemo(
         () => ({
@@ -38,10 +39,14 @@ export const Sun = () => {
         sun.current.material.uniforms.uTime.value = clock.getElapsedTime()
         sun.current.material.uniforms.uScale.value = sun.current.scale
 
+        if(sun.current.scale.x < 0) {
+            explode()
+        }
+
         if(bigBang) {
-            sun.current.scale.x -= 0.002
-            sun.current.scale.y -= 0.002
-            sun.current.scale.z -= 0.002
+            sun.current.scale.x -= 0.003
+            sun.current.scale.y -= 0.003
+            sun.current.scale.z -= 0.003
             return
         }
 
@@ -59,6 +64,7 @@ export const Sun = () => {
 
     return <>
         <Atmosphere x={0} z={0} size={4} />
+        <DistortWave x={0} z={0} size={1} />
         <mesh ref={sun} onClick={launchBigBang} onPointerOver={() => setHovered(true) } onPointerOut={() => setHovered(false) }>
             <sphereGeometry args={[4, 64, 64]} />
             <shaderMaterial
@@ -77,20 +83,28 @@ export const Atmosphere = ({ x, z, size }) => {
         () => ({
             uAtmosphereColor: new THREE.Uniform(new THREE.Color('#F85E29')),
             uBigBang: new THREE.Uniform(bigBang ? 1.0 : 0.0),
+            uScale: new THREE.Uniform(new THREE.Vector3(1, 1, 1)),
         }),
         []
     )
 
     useFrame(() => {
-        if(bigBang) {
-            atmosphere.current.scale.x -= 0.001
-            atmosphere.current.scale.y -= 0.001
-            atmosphere.current.scale.z -= 0.001
-            return
+        atmosphere.current.material.uniforms.uScale.value = atmosphere.current.scale
+
+        let atmosphereChanged = false
+        if(atmosphere.current.scale.x < 0) {
+            if (!atmosphereChanged) {
+                atmosphereChanged = true
+                atmosphere.current.material.uniforms.uAtmosphereColor.value = new THREE.Color('#5ABBF1')
+            }
         }
 
-        atmosphere.current.position.x = x
-        atmosphere.current.position.z = z
+        if(bigBang) {
+            atmosphere.current.scale.x -= 0.0037
+            atmosphere.current.scale.y -= 0.0037
+            atmosphere.current.scale.z -= 0.0037
+            return
+        }
     })
 
     return (
@@ -104,6 +118,53 @@ export const Atmosphere = ({ x, z, size }) => {
                 transparent
             />
         </mesh>
+    )
+}
+
+export const DistortWave = ({ x, z, size }) => {
+    const distortWave = useRef()
+    const bigBang = useStore((state) => state.bigBang)
+    const isExploding = useStore((state) => state.isExploding)
+    const uniforms = useMemo(
+        () => ({
+            uTime: new THREE.Uniform(0),
+            uBigBang: new THREE.Uniform(bigBang ? 1.0 : 0.0),
+            uScale: new THREE.Uniform(new THREE.Vector3(1, 1, 1)),
+            uShockwaveRadius: new THREE.Uniform(1.0),
+            uShockwaveWidth: new THREE.Uniform(0.2),
+        }),
+        []
+    )
+
+    useFrame((state) => {
+        const clock = state.clock
+
+        if(distortWave.current) {
+            distortWave.current.material.uniforms.uTime.value = clock.getElapsedTime()
+            distortWave.current.material.uniforms.uScale.value = distortWave.current.scale
+
+            if(isExploding) {
+                distortWave.current.scale.x += 0.3
+                distortWave.current.scale.y += 0.3
+                distortWave.current.scale.z += 0.3
+                return
+            }
+        }
+    })
+
+    return (
+        isExploding && (
+            <mesh ref={distortWave}>
+                <sphereGeometry args={[size, 64, 64]} />
+                <shaderMaterial
+                    vertexShader={distortWaveVertexShader}
+                    fragmentShader={distortWaveFragmentShader}
+                    uniforms={uniforms}
+                    side={THREE.BackSide}
+                    transparent
+                />
+            </mesh>
+        )
     )
 }
 
