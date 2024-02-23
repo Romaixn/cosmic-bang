@@ -144,9 +144,9 @@ export const DistortWave = ({ x, z, size }) => {
             distortWave.current.material.uniforms.uScale.value = distortWave.current.scale
 
             if(isExploding) {
-                distortWave.current.scale.x += 0.3
-                distortWave.current.scale.y += 0.3
-                distortWave.current.scale.z += 0.3
+                distortWave.current.scale.x += 0.25
+                distortWave.current.scale.y += 0.25
+                distortWave.current.scale.z += 0.25
                 return
             }
         }

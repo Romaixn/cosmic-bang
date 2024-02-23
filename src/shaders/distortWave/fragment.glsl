@@ -13,7 +13,7 @@ void main()
     vec3 color = vec3(fresnel);
 
     // Final color
-    gl_FragColor = vec4(color, 0.6);
+    gl_FragColor = vec4(vec3(1.0), fresnel);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
 }
