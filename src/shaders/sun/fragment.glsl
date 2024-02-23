@@ -61,14 +61,15 @@ void main() {
     vec3 normal = normalize(vNormal);
 
     vec3 color = vec3(0.0);
+    // Fresnel
+    float fresnel = dot(viewDirection, normal) + 1.0;
+    fresnel = pow(fresnel, 2.0);
 
     if(all(lessThan(uScale, vec3(0.0)))) {
-        color = vec3(1.0);
+        vec3 blue = vec3(0.5, 0.87, 0.9);
+        vec3 white = vec3(1.0);
+        color = mix(blue, white, 1.0 - fresnel * 5.0);
     } else {
-        // Fresnel
-        float fresnel = dot(viewDirection, normal) + 1.0;
-        fresnel = pow(fresnel, 2.0);
-
         // Noise
         vec4 p = vec4(vPosition * 3.0, uTime * 0.02);
         float noisy = fbm(p);
