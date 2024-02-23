@@ -5,9 +5,17 @@ import Sun from "./Sun"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import useStore from "./stores/useStore"
+import { useControls } from "leva"
 
 const Experience = () => {
-    const totalPlanets = 6
+    const { totalPlanets } = useControls({
+        totalPlanets: {
+            value: 6,
+            min: 1,
+            max: 20,
+            step: 1
+        }
+    })
     const planets = useMemo(() => {
         const random = (a, b) => a + Math.random() * b;
         const shuffle = (a) => {
@@ -21,25 +29,25 @@ const Experience = () => {
 
         const textures = shuffle([
             // Habitable
-            '/planets/habitable/Alpine.png',
-            '/planets/habitable/Savannah.png',
-            '/planets/habitable/Swamp.png',
-            '/planets/habitable/Tropical.png',
+            { texture: '/planets/habitable/Alpine.png', color: '#334635' },
+            { texture: '/planets/habitable/Savannah.png', color: '#A8B624' },
+            { texture: '/planets/habitable/Swamp.png', color: '#232B06' },
+            { texture: '/planets/habitable/Tropical.png', color: '#017DA9' },
             // Gas
-            '/planets/gaseous/Gaseous1.jpg',
-            '/planets/gaseous/Gaseous2.jpg',
-            '/planets/gaseous/Gaseous3.jpg',
-            '/planets/gaseous/Gaseous4.jpg',
+            { texture: '/planets/gaseous/Gaseous1.jpg', color: '#655A46' },
+            { texture: '/planets/gaseous/Gaseous2.jpg', color: '#AA777D' },
+            { texture: '/planets/gaseous/Gaseous3.jpg', color: '#9CBF89' },
+            { texture: '/planets/gaseous/Gaseous4.jpg', color: '#D1466D' },
             // Inhospitable
-            '/planets/inhospitable/Icy.png',
-            '/planets/inhospitable/Martian.png',
-            '/planets/inhospitable/Venusian.png',
-            '/planets/inhospitable/Volcanic.png',
+            { texture: '/planets/inhospitable/Icy.png', color: '#AAC3CD' },
+            { texture: '/planets/inhospitable/Martian.png', color: '#784233' },
+            { texture: '/planets/inhospitable/Venusian.png', color: '#73370B' },
+            { texture: '/planets/inhospitable/Volcanic.png', color: '#B6412D' },
             // Terrestrial
-            '/planets/terrestrial/Terrestrial1.png',
-            '/planets/terrestrial/Terrestrial2.png',
-            '/planets/terrestrial/Terrestrial3.png',
-            '/planets/terrestrial/Terrestrial4.png',
+            { texture: '/planets/terrestrial/Terrestrial1.png', color: '#00AAFF' },
+            { texture: '/planets/terrestrial/Terrestrial2.png', color: '#00AAFF' },
+            { texture: '/planets/terrestrial/Terrestrial3.png', color: '#00AAFF' },
+            { texture: '/planets/terrestrial/Terrestrial4.png', color: '#00AAFF' },
         ]);
 
         const planets = [];
@@ -52,12 +60,13 @@ const Experience = () => {
             speed: random(0.05, 0.1),
             offset: random(0, Math.PI * 2),
             rotationSpeed: random(0.005, 0.02),
-            texture: textures[index],
+            texture: textures[index].texture,
+            color: textures[index].color,
           });
         }
 
         return planets
-    }, [])
+    }, [totalPlanets])
 
     const { onPlanetClick, selectedPlanet, controlsEnabled } = useStore()
 

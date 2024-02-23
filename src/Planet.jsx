@@ -17,6 +17,7 @@ const Planet = ({
     offset = 0,
     rotationSpeed = 0.1,
     texture = '/planets/habitable/Tropical.png',
+    color = '#00aaff',
     onClick,
 }) => {
     const planetTexture = useLoader(TextureLoader, texture)
@@ -32,7 +33,7 @@ const Planet = ({
         () => ({
             uPlanetTexture: new THREE.Uniform(planetTexture),
             uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
-            uAtmosphereDayColor: new THREE.Uniform(new THREE.Color('#00aaff')),
+            uAtmosphereDayColor: new THREE.Uniform(new THREE.Color(color)),
             uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color('#ff6600'))
         }),
         []
@@ -55,7 +56,7 @@ const Planet = ({
     })
 
     return <>
-        <Atmosphere x={x} z={z} size={size} dayColor='#00aaff' twilightColor='#ff6600' />
+        <Atmosphere x={x} z={z} size={size} dayColor={color} twilightColor='#ff6600' />
         <mesh ref={planet} onClick={() => onClick(planet.current) }>
             <sphereGeometry args={[size, 64, 64]} />
             <shaderMaterial
