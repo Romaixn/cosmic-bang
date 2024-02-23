@@ -35,7 +35,7 @@ export const Sun = () => {
     }
 
     useControls({
-        launchBigBang: button(() => launchBigBang(), { label: 'Launch Big Bang' })
+        startSupernova: button(() => launchBigBang(), { label: 'Launch Big Bang' })
     })
 
     useFrame((state) => {
