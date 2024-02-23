@@ -1,4 +1,6 @@
 uniform float uTime;
+uniform float uBigBang;
+uniform vec3 uScale;
 
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -7,17 +9,36 @@ varying vec3 vLayer0;
 varying vec3 vLayer1;
 varying vec3 vLayer2;
 
+#include ../includes/noise.glsl
+
 mat2 rotate(float a) {
     float s = sin(a);
     float c = cos(a);
     return mat2(c, -s, s, c);
 }
 
+float remap(float value, float originMin, float originMax, float destinationMin, float destinationMax)
+{
+    return destinationMin + (value - originMin) * (destinationMax - destinationMin) / (originMax - originMin);
+}
+
 void main()
 {
-    // Position
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    gl_Position = projectionMatrix * viewMatrix * modelPosition;
+
+    if (uBigBang == 1.0 && all(greaterThan(uScale, vec3(0.0)))) {
+        float displacement = cnoise(position + vec3(0.5 * uTime));
+        vec3 newPosition = position + normal * (((1.0 - uScale.x) * 2.5) * displacement);
+
+        modelPosition = modelMatrix * vec4(newPosition, 1.0);
+        vec4 viewPosition = viewMatrix * modelPosition;
+        vec4 projectedPosition = projectionMatrix * viewPosition;
+
+        gl_Position = projectedPosition;
+    } else {
+        // Position
+        gl_Position = projectionMatrix * viewMatrix * modelPosition;
+    }
 
     // Model normal
     vec3 modelNormal = (modelMatrix * vec4(normal, 0.0)).xyz;

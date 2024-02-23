@@ -17,6 +17,7 @@ const Planet = ({
     offset = 0,
     rotationSpeed = 0.1,
     texture = '/planets/habitable/Tropical.png',
+    onClick,
 }) => {
     const planetTexture = useLoader(TextureLoader, texture)
     planetTexture.colorSpace = THREE.SRGBColorSpace
@@ -55,7 +56,7 @@ const Planet = ({
 
     return <>
         <Atmosphere x={x} z={z} size={size} dayColor='#00aaff' twilightColor='#ff6600' />
-        <mesh ref={planet}>
+        <mesh ref={planet} onClick={() => onClick(planet.current) }>
             <sphereGeometry args={[size, 64, 64]} />
             <shaderMaterial
                 vertexShader={vertexShader}

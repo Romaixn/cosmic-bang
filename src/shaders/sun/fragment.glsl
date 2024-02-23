@@ -1,6 +1,8 @@
 uniform vec2 uResolution;
 uniform float uTime;
 uniform sampler2D uNoise;
+uniform float uBigBang;
+uniform vec3 uScale;
 
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -49,28 +51,38 @@ float sun() {
     return sum;
 }
 
+float glowFactor(vec2 position, vec2 center, float radius, float intensity) {
+    float dist = distance(position, center);
+    return intensity * pow(radius / (dist + radius), 4.0);
+}
+
 void main() {
     vec3 viewDirection = normalize(vPosition - cameraPosition);
     vec3 normal = normalize(vNormal);
 
-    // Fresnel
-    float fresnel = dot(viewDirection, normal) + 1.0;
-    fresnel = pow(fresnel, 2.0);
+    vec3 color = vec3(0.0);
 
-    // Noise
-    vec4 p = vec4(vPosition * 3.0, uTime * 0.02);
-    float noisy = fbm(p);
+    if(all(lessThan(uScale, vec3(0.0)))) {
+        color = vec3(1.0);
+    } else {
+        // Fresnel
+        float fresnel = dot(viewDirection, normal) + 1.0;
+        fresnel = pow(fresnel, 2.0);
 
-    // Spots
-    vec4 p1 = vec4(vPosition * 2.0, uTime * 0.02);
-    float spots = max(snoise(p1), 0.0);
+        // Noise
+        vec4 p = vec4(vPosition * 3.0, uTime * 0.02);
+        float noisy = fbm(p);
 
-    // Colors
-    float brightness = sun();
-    brightness = brightness * 2.6 + 1.5;
-    brightness += fresnel;
-    vec3 color = brightnessToColor(brightness);
+        // Spots
+        vec4 p1 = vec4(vPosition * 2.0, uTime * 0.02);
+        float spots = max(snoise(p1), 0.0);
 
+        // Colors
+        float brightness = sun();
+        brightness = brightness * 2.6 + (1.0 - uScale.x + 1.5);
+        brightness += fresnel;
+        color = brightnessToColor(brightness);
+    }
 
     gl_FragColor = vec4(color, 1.0);
 }
