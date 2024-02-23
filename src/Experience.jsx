@@ -1,4 +1,4 @@
-import { OrbitControls, Stars } from "@react-three/drei"
+import { CameraShake, OrbitControls, Stars } from "@react-three/drei"
 import Planet from "./Planet"
 import { useMemo } from "react"
 import Sun from "./Sun"
@@ -6,6 +6,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import useStore from "./stores/useStore"
 import { useControls } from "leva"
+import { useRef } from "react"
 
 const Experience = () => {
     const { totalPlanets } = useControls({
@@ -69,6 +70,8 @@ const Experience = () => {
     }, [totalPlanets])
 
     const { onPlanetClick, selectedPlanet, controlsEnabled } = useStore()
+    const isExploding = useStore((state) => state.isExploding)
+    const { orbitControls } = useRef()
 
     const { camera } = useThree()
 
@@ -92,7 +95,17 @@ const Experience = () => {
         ))}
         <Stars />
 
-        <OrbitControls maxDistance={totalPlanets * 10} enabled={controlsEnabled} />
+        <OrbitControls ref={orbitControls} maxDistance={totalPlanets * 10} enabled={controlsEnabled} makeDefault />
+        {isExploding &&
+            <CameraShake
+                maxYaw={0.002}
+                maxPitch={0.002}
+                maxRoll={0.002}
+                yawFrequency={5}
+                pitchFrequency={5}
+                controls={orbitControls}
+            />
+        }
     </>
 }
 

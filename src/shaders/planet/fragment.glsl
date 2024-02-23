@@ -6,6 +6,7 @@ uniform sampler2D uPlanetTexture;
 uniform vec3 uSunDirection;
 uniform vec3 uAtmosphereDayColor;
 uniform vec3 uAtmosphereTwilightColor;
+uniform float uTimeAfterExplode;
 
 void main()
 {
@@ -36,7 +37,7 @@ void main()
     vec3 reflection = reflect(- uSunDirection, normal);
     float specular = - dot(reflection, viewDirection);
     specular = max(specular, 0.0);
-    specular = pow(specular, 32.0);
+    specular = pow(specular, 32.0 - uTimeAfterExplode);
     specular *= planetColor.b;
     vec3 specularColor = mix(vec3(1.0), atmosphereColor, fresnel);
     color += specular * specularColor;

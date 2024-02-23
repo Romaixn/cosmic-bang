@@ -9,6 +9,7 @@ import fragmentShader from './shaders/sun/fragment.glsl'
 import atmosphereFragmentShader from './shaders/sun/atmosphereFragment.glsl'
 import distortWaveVertexShader from './shaders/distortWave/vertex.glsl'
 import distortWaveFragmentShader from './shaders/distortWave/fragment.glsl'
+import { button, useControls } from "leva"
 
 export const Sun = () => {
     const sun = useRef()
@@ -32,6 +33,10 @@ export const Sun = () => {
         startBigBang()
         sun.current.material.uniforms.uBigBang.value = 1.0
     }
+
+    useControls({
+        launchBigBang: button(() => launchBigBang(), { label: 'Launch Big Bang' })
+    })
 
     useFrame((state) => {
         const clock = state.clock

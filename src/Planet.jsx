@@ -8,6 +8,7 @@ import vertexShader from './shaders/planet/vertex.glsl'
 import fragmentShader from './shaders/planet/fragment.glsl'
 import atmosphereVertexShader from './shaders/atmosphere/vertex.glsl'
 import atmosphereFragmentShader from './shaders/atmosphere/fragment.glsl'
+import useStore from './stores/useStore'
 
 const Planet = ({
     xRadius = 6,
@@ -29,16 +30,21 @@ const Planet = ({
     const [x, setX] = useState(xRadius)
     const [z, setZ] = useState(zRadius)
 
+    const isExploding = useStore((state) => state.isExploding)
+
     const uniforms = useMemo(
         () => ({
             uPlanetTexture: new THREE.Uniform(planetTexture),
             uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 0)),
             uAtmosphereDayColor: new THREE.Uniform(new THREE.Color(color)),
-            uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color('#ff6600'))
+            uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color('#ff6600')),
+            uExploding: new THREE.Uniform(isExploding),
+            uTimeAfterExplode: new THREE.Uniform(0),
         }),
         []
     )
 
+    let timeAfterExplode = 0
     useFrame((state) => {
         const { clock } = state
 
@@ -53,6 +59,12 @@ const Planet = ({
         // Sun direction
         const sunDirection = new THREE.Vector3(-x, 0, -z).normalize()
         planet.current.material.uniforms.uSunDirection.value = sunDirection
+
+        if(isExploding) {
+            timeAfterExplode += 1
+            planet.current.material.uniforms.uExploding.value = 1.0
+            planet.current.material.uniforms.uTimeAfterExplode.value = timeAfterExplode
+        }
     })
 
     return <>
