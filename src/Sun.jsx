@@ -116,6 +116,7 @@ export const Atmosphere = ({ x, z, size }) => {
                 uniforms={uniforms}
                 side={THREE.BackSide}
                 transparent
+                depthWrite={false}
             />
         </mesh>
     )
@@ -162,6 +163,7 @@ export const DistortWave = ({ x, z, size }) => {
                     uniforms={uniforms}
                     side={THREE.BackSide}
                     transparent
+                    depthWrite={false}
                 />
             </mesh>
         )
