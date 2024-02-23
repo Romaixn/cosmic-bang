@@ -1,6 +1,7 @@
 import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef, useEffect, useState } from "react"
-import { useTexture } from "@react-three/drei"
+import { Sparkles, useTexture } from "@react-three/drei"
+import { button, useControls } from "leva"
 import * as THREE from "three"
 
 import useStore from "./stores/useStore"
@@ -9,14 +10,15 @@ import fragmentShader from './shaders/sun/fragment.glsl'
 import atmosphereFragmentShader from './shaders/sun/atmosphereFragment.glsl'
 import distortWaveVertexShader from './shaders/distortWave/vertex.glsl'
 import distortWaveFragmentShader from './shaders/distortWave/fragment.glsl'
-import { button, useControls } from "leva"
 
 export const Sun = () => {
     const sun = useRef()
+    const sparkles = useRef()
     const [hovered, setHovered] = useState(false)
     const bigBang = useStore((state) => state.bigBang)
     const startBigBang = useStore((state) => state.startBigBang)
     const explode = useStore((state) => state.explode)
+    const isExploding = useStore((state) => state.isExploding)
     const noise = useTexture('/noise.png')
     const uniforms = useMemo(
         () => ({
@@ -46,6 +48,12 @@ export const Sun = () => {
 
         if(sun.current.scale.x < 0) {
             explode()
+            if(sparkles.current) {
+                sparkles.current.scale.x += (1 - sun.current.scale.x) * 0.015
+                sparkles.current.scale.y += (1 - sun.current.scale.y) * 0.015
+                sparkles.current.scale.z += (1 - sun.current.scale.z) * 0.015
+                console.log(sparkles.current.scale);
+            }
         }
 
         if(bigBang) {
@@ -78,6 +86,7 @@ export const Sun = () => {
                 uniforms={uniforms}
             />
         </mesh>
+        {isExploding && <Sparkles ref={sparkles} color='#5ABBF1' count={300} size={6} speed={0.001} opacity={0.8} noise={0} /> }
     </>
 }
 
@@ -150,9 +159,9 @@ export const DistortWave = ({ x, z, size }) => {
             distortWave.current.material.uniforms.uScale.value = distortWave.current.scale
 
             if(isExploding) {
-                distortWave.current.scale.x += 0.25
-                distortWave.current.scale.y += 0.25
-                distortWave.current.scale.z += 0.25
+                distortWave.current.scale.x += 0.15
+                distortWave.current.scale.y += 0.15
+                distortWave.current.scale.z += 0.15
                 return
             }
         }
