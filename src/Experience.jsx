@@ -78,9 +78,9 @@ const Experience = () => {
 
     return <>
         <Sun />
-        {/* {planets.map((planet) => (
+        {planets.map((planet) => (
             <Planet key={planet.id} {...planet} />
-        ))} */}
+        ))}
         <Stars />
 
         <OrbitControls maxDistance={totalPlanets * 10} enabled={controlsEnabled} />
