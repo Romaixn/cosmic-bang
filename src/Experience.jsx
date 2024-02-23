@@ -7,6 +7,7 @@ import * as THREE from "three"
 import useStore from "./stores/useStore"
 import { useControls } from "leva"
 import { useRef } from "react"
+import { Effects } from "./Effects"
 
 const Experience = () => {
     const { totalPlanets } = useControls({
@@ -95,6 +96,7 @@ const Experience = () => {
         ))}
         <Stars />
 
+        <Effects />
         <OrbitControls ref={orbitControls} maxDistance={totalPlanets * 10} enabled={controlsEnabled} makeDefault />
         {isExploding &&
             <CameraShake

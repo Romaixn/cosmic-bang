@@ -68,7 +68,7 @@ void main() {
     if(all(lessThan(uScale, vec3(0.0)))) {
         vec3 blue = vec3(0.5, 0.87, 0.9);
         vec3 white = vec3(1.0);
-        color = mix(blue, white, 1.0 - fresnel * 5.0);
+        color = mix(blue, white, 1.0 - fresnel * 6.0);
     } else {
         // Noise
         vec4 p = vec4(vPosition * 3.0, uTime * 0.02);
