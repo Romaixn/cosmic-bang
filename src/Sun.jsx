@@ -86,7 +86,7 @@ export const Sun = () => {
                 uniforms={uniforms}
             />
         </mesh>
-        {isExploding && <Sparkles ref={sparkles} color='#5ABBF1' count={300} size={6} speed={0.001} opacity={0.8} noise={0} /> }
+        {isExploding && <Sparkles ref={sparkles} color='#5ABBF1' count={250} size={4} speed={0.001} opacity={0.8} noise={0} /> }
     </>
 }
 
@@ -95,7 +95,7 @@ export const Atmosphere = ({ x, z, size }) => {
     const bigBang = useStore((state) => state.bigBang)
     const uniforms = useMemo(
         () => ({
-            uAtmosphereColor: new THREE.Uniform(new THREE.Color('#F85E29')),
+            uAtmosphereColor: new THREE.Uniform(new THREE.Color('#FB6A2C')),
             uBigBang: new THREE.Uniform(bigBang ? 1.0 : 0.0),
             uScale: new THREE.Uniform(new THREE.Vector3(1, 1, 1)),
         }),
@@ -114,15 +114,15 @@ export const Atmosphere = ({ x, z, size }) => {
         }
 
         if(bigBang) {
-            atmosphere.current.scale.x -= 0.0037
-            atmosphere.current.scale.y -= 0.0037
-            atmosphere.current.scale.z -= 0.0037
+            atmosphere.current.scale.x -= 0.0035
+            atmosphere.current.scale.y -= 0.0035
+            atmosphere.current.scale.z -= 0.0035
             return
         }
     })
 
     return (
-        <mesh ref={atmosphere} scale={[1.2, 1.2, 1.2]} >
+        <mesh ref={atmosphere} scale={[1.15, 1.15, 1.15]} >
             <sphereGeometry args={[size, 64, 64]} />
             <shaderMaterial
                 vertexShader={vertexShader}
