@@ -46,14 +46,21 @@ export const Sun = () => {
         sun.current.material.uniforms.uTime.value = clock.getElapsedTime()
         sun.current.material.uniforms.uScale.value = sun.current.scale
 
+        if(sun.current.scale.x < 1) {
+            if(sparkles.current) {
+                if(sparkles.current.scale.x === 1) {
+                    sparkles.current.scale.set(0, 0, 0);
+                }
+
+                let scaleFactor = (1 - sun.current.scale.x) * 0.015
+                sparkles.current.scale.x += scaleFactor
+                sparkles.current.scale.y += scaleFactor
+                sparkles.current.scale.z += scaleFactor
+            }
+        }
+
         if(sun.current.scale.x < 0) {
             explode()
-            if(sparkles.current) {
-                sparkles.current.scale.x += (1 - sun.current.scale.x) * 0.015
-                sparkles.current.scale.y += (1 - sun.current.scale.y) * 0.015
-                sparkles.current.scale.z += (1 - sun.current.scale.z) * 0.015
-                console.log(sparkles.current.scale);
-            }
         }
 
         if(bigBang) {
@@ -86,7 +93,7 @@ export const Sun = () => {
                 uniforms={uniforms}
             />
         </mesh>
-        {isExploding && <Sparkles ref={sparkles} color='#5ABBF1' count={250} size={4} speed={0.001} opacity={0.8} noise={0} /> }
+        {isExploding && <Sparkles ref={sparkles} color='#5ABBF1' position={[-0.17, 0, -0.17]} count={250} size={4} speed={0} opacity={0.8} noise={0} /> }
     </>
 }
 
