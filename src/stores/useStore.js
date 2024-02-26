@@ -2,12 +2,14 @@ import { create } from 'zustand';
 
 const useStore = create((set) => ({
     selectedPlanet: null,
+    sun: null,
     controlsEnabled: true,
     bigBang: false,
     isExploding: false,
     startBigBang: () => set({ bigBang: true }),
     explode: () => set({ isExploding: true }),
     setSelectedPlanet: (planet) => set({ selectedPlanet: planet }),
+    setSun: (sun) => set({ sun }),
     setControlsEnabled: (enabled) => set({ controlsEnabled: enabled }),
     onPlanetClick: (planet) => set({ selectedPlanet: planet, controlsEnabled: false }),
     onCanvasClick: () => set((state) => {
