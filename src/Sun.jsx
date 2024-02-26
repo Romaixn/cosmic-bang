@@ -13,6 +13,8 @@ import distortWaveFragmentShader from './shaders/distortWave/fragment.glsl'
 
 export const Sun = () => {
     const sun = useRef()
+    const sunScale = useStore((state) => state.sunScale)
+    const setSunScale = useStore((state) => state.setSunScale)
     const sparkles = useRef()
     const [hovered, setHovered] = useState(false)
     const setSun = useStore((state) => state.setSun)
@@ -24,7 +26,7 @@ export const Sun = () => {
     const uniforms = useMemo(
         () => ({
             uTime: new THREE.Uniform(0),
-            uScale: new THREE.Uniform(new THREE.Vector3(1, 1, 1)),
+            uScale: new THREE.Uniform(new THREE.Vector3(sunScale, sunScale, sunScale)),
             uNoise: new THREE.Uniform(noise),
             uResolution: new THREE.Uniform(new THREE.Vector2(window.innerWidth, window.innerHeight)),
             uBigBang: new THREE.Uniform(bigBang ? 1.0 : 0.0),
@@ -68,6 +70,7 @@ export const Sun = () => {
             sun.current.scale.x -= 0.003
             sun.current.scale.y -= 0.003
             sun.current.scale.z -= 0.003
+            setSunScale(sun.current.scale.x)
             return
         }
 

@@ -10,8 +10,6 @@ export function Effects() {
     useEffect(() => {
         if(sun && sun.current) {
             sun.current.material.transparent = false
-            sun.current.transparent = false
-            sun.current.material.depthWrite = false
         }
     }, [sun, isExplode])
 

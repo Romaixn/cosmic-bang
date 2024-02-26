@@ -11,6 +11,7 @@ import atmosphereFragmentShader from './shaders/atmosphere/fragment.glsl'
 import useStore from './stores/useStore'
 
 const Planet = ({
+    id = 0,
     xRadius = 6,
     zRadius = 6,
     size = 1,
@@ -26,7 +27,9 @@ const Planet = ({
     planetTexture.anisotropy = 8
 
     const planet = useRef()
+    const sunScale = useStore((state) => state.sunScale)
 
+    const [isDestroyed, setIsDestroyed] = useState(false)
     const [x, setX] = useState(xRadius)
     const [z, setZ] = useState(zRadius)
 
@@ -48,37 +51,45 @@ const Planet = ({
     useFrame((state) => {
         const { clock } = state
 
-        const t = clock.getElapsedTime() * speed + offset
-        setX(xRadius * Math.cos(t))
-        setZ(zRadius * Math.sin(t))
-        planet.current.position.x = x
-        planet.current.position.z = z
+        if(planet.current) {
+            const t = clock.getElapsedTime() * speed + offset
+            setX(xRadius * Math.cos(t))
+            setZ(zRadius * Math.sin(t))
+            planet.current.position.x = x
+            planet.current.position.z = z
 
-        planet.current.rotation.y = clock.getElapsedTime() * rotationSpeed
+            planet.current.rotation.y = clock.getElapsedTime() * rotationSpeed
 
-        // Sun direction
-        const sunDirection = new THREE.Vector3(-x, 0, -z).normalize()
-        planet.current.material.uniforms.uSunDirection.value = sunDirection
+            // Sun direction
+            const sunDirection = new THREE.Vector3(-x, 0, -z).normalize()
+            planet.current.material.uniforms.uSunDirection.value = sunDirection
 
-        if(isExploding) {
-            timeAfterExplode += 1
-            planet.current.material.uniforms.uExploding.value = 1.0
-            planet.current.material.uniforms.uTimeAfterExplode.value = timeAfterExplode
+            if(isExploding) {
+                timeAfterExplode += 1
+                planet.current.material.uniforms.uExploding.value = 1.0
+                planet.current.material.uniforms.uTimeAfterExplode.value = timeAfterExplode
+            }
+
+            if(sunScale <= -3 - id * 1.25) {
+                setIsDestroyed(true)
+            }
         }
     })
 
-    return <>
-        <Atmosphere x={x} z={z} size={size} dayColor={color} twilightColor='#ff6600' />
-        <mesh ref={planet} onClick={() => onClick(planet.current) }>
-            <sphereGeometry args={[size, 64, 64]} />
-            <shaderMaterial
-                vertexShader={vertexShader}
-                fragmentShader={fragmentShader}
-                uniforms={uniforms}
-            />
-        </mesh>
-        <Ecliptic xRadius={xRadius} zRadius={zRadius} />
-    </>
+    if(!isDestroyed) {
+        return <>
+            <Atmosphere x={x} z={z} size={size} dayColor={color} twilightColor='#ff6600' />
+            <mesh ref={planet} onClick={() => onClick(planet.current) }>
+                <sphereGeometry args={[size, 64, 64]} />
+                <shaderMaterial
+                    vertexShader={vertexShader}
+                    fragmentShader={fragmentShader}
+                    uniforms={uniforms}
+                />
+            </mesh>
+            <Ecliptic xRadius={xRadius} zRadius={zRadius} />
+        </>
+    }
 }
 
 export const Atmosphere = ({ x, z, size, dayColor, twilightColor }) => {
