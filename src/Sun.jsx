@@ -15,6 +15,7 @@ export const Sun = () => {
     const sun = useRef()
     const sparkles = useRef()
     const [hovered, setHovered] = useState(false)
+    const setSun = useStore((state) => state.setSun)
     const bigBang = useStore((state) => state.bigBang)
     const startBigBang = useStore((state) => state.startBigBang)
     const explode = useStore((state) => state.explode)
@@ -74,13 +75,16 @@ export const Sun = () => {
     })
 
     useEffect(() => {
+        setSun(sun.current)
+
         if(bigBang) {
             document.body.style.cursor = 'auto'
             return
         }
 
         document.body.style.cursor = hovered ? 'pointer' : 'auto'
-    }, [hovered, bigBang])
+
+    }, [hovered, bigBang, sun])
 
     return <>
         <Atmosphere x={0} z={0} size={4} />
